@@ -54,14 +54,14 @@ def send_email(matches):
         full_link, rooms, area, rent, street, kreis = match
         lines.append(
             f"""
-            Wohnung gefunden:
-            Link: {full_link}
-            Zimmer: {rooms}
-            Fläche: {area}
-            Miete: {rent} CHF
-            Strasse: {street}
-            Kreis: {kreis}
-            """
+Wohnung gefunden:
+  Link: {full_link}
+  Zimmer: {rooms}
+  Fläche: {area}
+  Miete: {rent} CHF
+  Strasse: {street}
+  Kreis: {kreis}
+"""
         )
 
     message_body = "\n\n".join(lines)
@@ -69,11 +69,14 @@ def send_email(matches):
     msg = MIMEText(message_body)
     msg['Subject'] = f"Neue Wohnungen gefunden ({len(matches)})"
     msg['From'] = YOUR_EMAIL
-    msg['To'] = TO_EMAIL
+    msg['To'] = TO_EMAIL  # als String für den Header OK
+
+    # 🗝️ WICHTIG: Liste für sendmail
+    recipients = [email.strip() for email in TO_EMAIL.split(",")]
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
         server.login(YOUR_EMAIL, YOUR_PASSWORD)
-        server.sendmail(YOUR_EMAIL, TO_EMAIL, msg.as_string())
+        server.sendmail(YOUR_EMAIL, recipients, msg.as_string())
 
 if __name__ == "__main__":
     while True:
